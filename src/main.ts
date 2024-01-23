@@ -5,7 +5,7 @@ import { execSync } from 'child_process'
 export async function run(): Promise<void> {
   try {
     const project = core.getInput('name')
-    const environment = core.getInput('environment')
+    const environment = core.getInput('environment') || 'tmp'
     const variables = JSON.parse(core.getInput('variables') || '{}')
     const action = core.getInput('action') as 'deploy' | 'destroy'
     const pr = github.context?.payload?.pull_request?.number
@@ -18,7 +18,6 @@ export async function run(): Promise<void> {
 
     if (!domain) throw new Error('Missing DOMAIN variable')
     if (!project) throw new Error('Missing name input')
-    if (!environment) throw new Error('Missing environment input')
     if (!action) throw new Error('Missing action input')
 
     for (const [key, value] of Object.entries(variables)) {

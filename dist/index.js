@@ -28942,7 +28942,7 @@ const child_process_1 = __nccwpck_require__(2081);
 async function run() {
     try {
         const project = core.getInput('name');
-        const environment = core.getInput('environment');
+        const environment = core.getInput('environment') || 'tmp';
         const variables = JSON.parse(core.getInput('variables') || '{}');
         const action = core.getInput('action');
         const pr = github.context?.payload?.pull_request?.number;
@@ -28956,8 +28956,6 @@ async function run() {
             throw new Error('Missing DOMAIN variable');
         if (!project)
             throw new Error('Missing name input');
-        if (!environment)
-            throw new Error('Missing environment input');
         if (!action)
             throw new Error('Missing action input');
         for (const [key, value] of Object.entries(variables)) {

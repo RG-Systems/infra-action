@@ -3,12 +3,14 @@ description: 'Provide a description here'
 author: 'Your name or organization here'
 
 inputs:
+  name:
+    description: 'The name of the project'
+    required: true
   action:
     description: 'The action to perform "deploy" or "destroy"'
     required: true
   environment:
     description: 'The environment to deploy to'
-    required: true
   aws-account:
     description: 'The AWS account to deploy to'
     required: true
