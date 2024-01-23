@@ -16,7 +16,7 @@ export async function run(): Promise<void> {
       ? `${pr}-${environment}-${project}`
       : `${environment}-${project}`
 
-    core.debug(execSync('pwd').toString())
+    core.debug(`CURRENT FOLDER (PWD): ${execSync('pwd').toString()}`)
 
     if (!domain) throw new Error('Missing DOMAIN variable')
     if (!project) throw new Error('Missing name input')
