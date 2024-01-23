@@ -2,22 +2,32 @@ name: 'The name of your action here'
 description: 'Provide a description here'
 author: 'Your name or organization here'
 
-# Add your action's branding here. This will appear on the GitHub Marketplace.
-branding:
-  icon: 'heart'
-  color: 'red'
-
-# Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  action:
+    description: 'The action to perform "deploy" or "destroy"'
     required: true
-    default: '1000'
+  environment:
+    description: 'The environment to deploy to'
+    required: true
+  aws-account:
+    description: 'The AWS account to deploy to'
+    required: true
+  aws-region:
+    description: 'The AWS region to deploy to'
+    required: true
+  variables:
+    description: 'The variables to pass to the CDK'
+    required: true
 
-# Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  folder:
+    description: 'The folder to upload'
+  bucket:
+    description: 'The bucket to upload to'
+  id:
+    description: 'The distribution id'
+  url:
+    description: 'The distribution url'
 
 runs:
   using: node20

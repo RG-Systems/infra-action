@@ -1,24 +1,43 @@
 import * as core from '@actions/core'
-import { wait } from './wait'
+import * as github from '@actions/github'
+import { execSync } from 'child_process';
 
-/**
- * The main function for the action.
- * @returns {Promise<void>} Resolves when the action is complete.
- */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const project = core.getInput('name');
+    const environment = core.getInput('environment');
+    const variables = JSON.parse(core.getInput('variables') || '{}');
+    const action = core.getInput('action') as 'deploy' | 'destroy';
+    const pr = github.context?.payload?.pull_request?.number;
+    const folder = github.context?.sha.slice(0, 7);
+    const domain = variables?.DOMAIN;
+    const stack = pr ? `${pr}-${environment}-${project}` : `${environment}-${project}`;
+    const vars = [];
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    if (!domain) throw new Error('Missing DOMAIN variable');
+    if (!project) throw new Error('Missing name input');
+    if (!environment) throw new Error('Missing environment input');
+    if (!action) throw new Error('Missing action input');
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    for (const [key, value] of Object.entries(variables)) {
+      vars.push(`${key}=${value}`);
+    }
+
+    execSync(`echo "${vars.join('\n')}" > .env`);
+
+    core.debug(execSync('cat .env').toString());
+
+    execSync(`npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`);
+
+    const outputs = JSON.parse(execSync(`cat ./cdk-outputs.json`).toString());
+
+    core.debug(JSON.stringify(outputs, null, 2));
 
     // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    core.setOutput('folder', folder);
+    core.setOutput('bucket', outputs[stack].BucketName);
+    core.setOutput('id', outputs[stack].DistributionId);
+    core.setOutput('url', outputs[stack].DeploymentUrl);
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
