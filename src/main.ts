@@ -31,7 +31,10 @@ export async function run(): Promise<void> {
     core.debug(execSync('cat .env').toString())
 
     execSync(
-      `npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`
+      `npx cdk ${action} ${stack}` +
+        ` --app "node ./dist/cdk/index.js"` +
+        ` --require-approval never` +
+        ` --outputs-file cdk-outputs.json`
     )
 
     const outputs = JSON.parse(execSync(`cat ./cdk-outputs.json`).toString())

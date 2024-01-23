@@ -28964,7 +28964,10 @@ async function run() {
         }
         (0, child_process_1.execSync)(`echo "${vars.join('\n')}" > .env`);
         core.debug((0, child_process_1.execSync)('cat .env').toString());
-        (0, child_process_1.execSync)(`npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`);
+        (0, child_process_1.execSync)(`npx cdk ${action} ${stack}` +
+            ` --app "node ./dist/cdk/index.js"` +
+            ` --require-approval never` +
+            ` --outputs-file cdk-outputs.json`);
         const outputs = JSON.parse((0, child_process_1.execSync)(`cat ./cdk-outputs.json`).toString());
         core.debug(JSON.stringify(outputs, null, 2));
         // Set outputs for other workflow steps to use
