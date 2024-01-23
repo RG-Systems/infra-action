@@ -11,6 +11,7 @@ inputs:
     required: true
   environment:
     description: 'The environment to deploy to'
+    default: tmp
   aws-account:
     description: 'The AWS account to deploy to'
     required: true

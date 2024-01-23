@@ -28952,6 +28952,7 @@ async function run() {
         const stack = pr
             ? `${pr}-${environment}-${project}`
             : `${environment}-${project}`;
+        core.debug((0, child_process_1.execSync)('pwd').toString());
         if (!domain)
             throw new Error('Missing DOMAIN variable');
         if (!project)
