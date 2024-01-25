@@ -1,9 +1,10 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as exec from '@actions/exec'
-import fs from 'fs/promises';
 
-import { isValidJSON } from './utils/isValidJSON';
+import fs from 'fs/promises'
+
+import { isValidJSON } from './utils/isValidJSON'
 
 export async function run(): Promise<void> {
   try {
@@ -31,24 +32,21 @@ export async function run(): Promise<void> {
 
     await exec.getExecOutput('echo', [`"${vars.join('\n')}" > .env`])
 
-    await exec.getExecOutput('cat', ['.env']);
+    await exec.getExecOutput('cat', ['.env'])
 
-    await exec.exec(
-      `npx cdk ${action} ${stack}` +
-        ` --app "node ./dist/cdk/index.js"` +
-        ` --require-approval never` +
-        ` --outputs-file cdk-outputs.json`
-    )
+    require('aws-cdk/bin/cdk').deploy()
 
     await exec.getExecOutput('cat', ['cdk-outputs.json'])
-    const cdkOutputsFile = await fs.readFile('cdk-outputs.json', 'utf8');
-    const outputs = isValidJSON(cdkOutputsFile) ? JSON.parse(cdkOutputsFile) : {
-      [stack]: {
-        BucketName: 'undefined',
-        DistributionId: 'undefined',
-        DeploymentUrl: 'undefined'
-      }
-    };
+    const cdkOutputsFile = await fs.readFile('cdk-outputs.json', 'utf8')
+    const outputs = isValidJSON(cdkOutputsFile)
+      ? JSON.parse(cdkOutputsFile)
+      : {
+          [stack]: {
+            BucketName: 'undefined',
+            DistributionId: 'undefined',
+            DeploymentUrl: 'undefined'
+          }
+        }
 
     // Set outputs for other workflow steps to use
     core.setOutput('folder', folder)
