@@ -1,6 +1,9 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import { execSync } from 'child_process'
+import * as exec from '@actions/exec'
+import fs from 'fs/promises';
+
+import { isValidJSON } from './utils/isValidJSON';
 
 export async function run(): Promise<void> {
   try {
@@ -16,7 +19,7 @@ export async function run(): Promise<void> {
       ? `${pr}-${environment}-${project}`
       : `${environment}-${project}`
 
-    core.debug(`CURRENT FOLDER (PWD): ${execSync('pwd').toString()}`)
+    core.debug(`CURRENT FOLDER (PWD): ${exec.exec('pwd').toString()}`)
 
     if (!domain) throw new Error('Missing DOMAIN variable')
     if (!project) throw new Error('Missing name input')
@@ -26,26 +29,32 @@ export async function run(): Promise<void> {
       vars.push(`${key}=${value}`)
     }
 
-    execSync(`echo "${vars.join('\n')}" > .env`)
+    await exec.getExecOutput('echo', [`"${vars.join('\n')}" > .env`])
 
-    core.debug(execSync('cat .env').toString())
+    await exec.getExecOutput('cat', ['.env']);
 
-    execSync(
+    await exec.exec(
       `npx cdk ${action} ${stack}` +
         ` --app "node ./dist/cdk/index.js"` +
         ` --require-approval never` +
         ` --outputs-file cdk-outputs.json`
     )
 
-    const outputs = JSON.parse(execSync(`cat ./cdk-outputs.json`).toString())
-
-    core.debug(JSON.stringify(outputs, null, 2))
+    await exec.getExecOutput('cat', ['cdk-outputs.json'])
+    const cdkOutputsFile = await fs.readFile('cdk-outputs.json', 'utf8');
+    const outputs = isValidJSON(cdkOutputsFile) ? JSON.parse(cdkOutputsFile) : {
+      [stack]: {
+        BucketName: 'undefined',
+        DistributionId: 'undefined',
+        DeploymentUrl: 'undefined'
+      }
+    };
 
     // Set outputs for other workflow steps to use
     core.setOutput('folder', folder)
-    core.setOutput('bucket', outputs[stack].BucketName)
-    core.setOutput('id', outputs[stack].DistributionId)
-    core.setOutput('url', outputs[stack].DeploymentUrl)
+    core.setOutput('bucket', outputs?.[stack]?.BucketName)
+    core.setOutput('id', outputs?.[stack]?.DistributionId)
+    core.setOutput('url', outputs?.[stack]?.DeploymentUrl)
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
