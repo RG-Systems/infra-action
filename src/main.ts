@@ -32,7 +32,7 @@ export async function run(): Promise<void> {
 
     execSync(
       `npx cdk ${action} ${stack}` +
-        ` --app "node ./dist/cdk/index.js"` +
+        ` --app "npx ts-node --prefer-ts-exts ./cdk/index.ts"` +
         ` --require-approval never` +
         ` --outputs-file cdk-outputs.json`
     )
