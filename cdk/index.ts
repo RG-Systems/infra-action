@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-import 'dotenv/config'
-import 'source-map-support/register'
+import 'dotenv/config';
+import 'source-map-support/register';
 
-import * as cdk from 'aws-cdk-lib'
+import * as cdk from 'aws-cdk-lib';
 
-import { PriceClass } from 'aws-cdk-lib/aws-cloudfront'
+import { PriceClass } from 'aws-cdk-lib/aws-cloudfront';
 
-import { Stack } from './stack'
+import { Stack } from './stack';
 
-const app = new cdk.App()
+const app = new cdk.App();
 
 const {
   AWS_ACCOUNT,
@@ -20,12 +20,12 @@ const {
   ENV,
   PROJECT_NAME,
   IDENTITY
-} = process.env || {}
+} = process.env || {};
 
-const isProduction = PRODUCTION ? PRODUCTION === 'true' : false
+const isProduction = PRODUCTION ? PRODUCTION === 'true' : false;
 const priceClass = isProduction
   ? PriceClass.PRICE_CLASS_ALL
-  : PriceClass.PRICE_CLASS_100
+  : PriceClass.PRICE_CLASS_100;
 
 new Stack(app, STACK!, {
   priceClass,
@@ -38,4 +38,4 @@ new Stack(app, STACK!, {
     account: AWS_ACCOUNT,
     region: AWS_REGION
   }
-})
+});

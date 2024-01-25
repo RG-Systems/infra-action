@@ -28952,7 +28952,6 @@ async function run() {
         const stack = pr
             ? `${pr}-${environment}-${project}`
             : `${environment}-${project}`;
-        core.debug(`CURRENT FOLDER (PWD): ${(0, child_process_1.execSync)('pwd').toString()}`);
         if (!domain)
             throw new Error('Missing DOMAIN variable');
         if (!project)
@@ -28964,7 +28963,7 @@ async function run() {
         }
         (0, child_process_1.execSync)(`echo "${vars.join('\n')}" > .env`);
         core.debug((0, child_process_1.execSync)('cat .env').toString());
-        (0, child_process_1.execSync)(`npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`);
+        (0, child_process_1.execSync)(`pwd && ls --all && npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`);
         const outputs = JSON.parse((0, child_process_1.execSync)(`cat ./cdk-outputs.json`).toString());
         core.debug(JSON.stringify(outputs, null, 2));
         // Set outputs for other workflow steps to use
