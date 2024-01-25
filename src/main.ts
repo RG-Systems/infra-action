@@ -4,12 +4,12 @@ import { execSync } from 'child_process';
 
 export async function run(): Promise<void> {
   try {
-    const project = core.getInput('name');
-    const environment = core.getInput('environment') || 'tmp';
-    const variables = JSON.parse(core.getInput('variables') || '{}');
-    const action = core.getInput('action') as 'deploy' | 'destroy';
     const pr = github.context?.payload?.pull_request?.number;
     const folder = github.context?.sha.slice(0, 7);
+    const variables = JSON.parse(process.env.VARIABLES || '{}');
+    const action = process.env.ACTION;
+    const environment = process.env.ENVIRONMENT;
+    const project = process.env.PROJECT_NAME;
     const domain = variables?.DOMAIN;
     const vars = [];
     const stack = pr

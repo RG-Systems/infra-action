@@ -35,10 +35,10 @@ outputs:
 runs:
   using: docker
   image: Dockerfile
-  args:
-    - ${{ inputs.name }}
-    - ${{ inputs.action }}
-    - ${{ inputs.environment }}
-    - ${{ inputs.aws-account }}
-    - ${{ inputs.aws-region }}
-    - ${{ inputs.variables }}
+  env:
+    AWS_ACCOUNT: ${{ inputs.aws-account }}
+    AWS_REGION: ${{ inputs.aws-region }}
+    PROJECT_NAME: ${{ inputs.name }}
+    ACTION: ${{ inputs.action }}
+    ENVIRONMENT: ${{ inputs.environment }}
+    VARIABLES: ${{ inputs.variables }}
