@@ -15,9 +15,9 @@ const {
   AWS_REGION,
   ORIGIN_PATH,
   PRODUCTION,
-  STACK,
+  STACK = 'n2p-ui-infra-action',
   DOMAIN,
-  ENV,
+  ENV = 'tmp',
   PROJECT_NAME,
   IDENTITY
 } = process.env || {};
@@ -27,9 +27,9 @@ const priceClass = isProduction
   ? PriceClass.PRICE_CLASS_ALL
   : PriceClass.PRICE_CLASS_100;
 
-new Stack(app, STACK!, {
+new Stack(app, STACK, {
   priceClass,
-  environment: ENV!,
+  environment: ENV,
   project: PROJECT_NAME,
   identity: IDENTITY,
   path: ORIGIN_PATH,

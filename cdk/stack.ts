@@ -102,7 +102,7 @@ export class Stack extends cdk.Stack {
 
   private getZone(domain?: string): route53.IHostedZone | undefined {
     if (domain) {
-      const [_, ...domains] = domain.split('.');
+      const [, ...domains] = domain.split('.');
       const domainName = domains.join('.');
       return route53.HostedZone.fromLookup(this, 'Zone', { domainName });
     }
@@ -193,7 +193,7 @@ export class Stack extends cdk.Stack {
     if (domain && zone) {
       const [subdomain] = domain.split('.');
       new route53.ARecord(this, 'ARecord', {
-        zone: zone,
+        zone,
         recordName: subdomain,
         target: route53.RecordTarget.fromAlias(
           new targets.CloudFrontTarget(distribution)
@@ -201,7 +201,7 @@ export class Stack extends cdk.Stack {
       });
 
       new route53.AaaaRecord(this, 'AliasRecord', {
-        zone: zone,
+        zone,
         recordName: subdomain,
         target: route53.RecordTarget.fromAlias(
           new targets.CloudFrontTarget(distribution)
@@ -216,11 +216,11 @@ export class Stack extends cdk.Stack {
     domain?: string
   ): void {
     new cdk.CfnOutput(this, 'DeploymentUrl', {
-      value: 'https://' + domain
+      value: `https://${domain}`
     });
 
     new cdk.CfnOutput(this, 'DistributionUrl', {
-      value: 'https://' + distribution.domainName
+      value: `https://${distribution.domainName}`
     });
 
     new cdk.CfnOutput(this, 'DistributionId', {

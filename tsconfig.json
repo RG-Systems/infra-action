@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "CommonJS",
-    "rootDir": "./src",
+    "rootDir": "./",
     "baseUrl": "./",
     "sourceMap": true,
     "outDir": "./dist",
@@ -33,7 +33,6 @@
     ]
   },
   "exclude": [
-    "./cdk",
     "./dist",
     "./node_modules",
     "./__tests__",
