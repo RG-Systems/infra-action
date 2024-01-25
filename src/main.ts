@@ -29,7 +29,7 @@ export async function run(): Promise<void> {
     core.debug(execSync('cat .env').toString());
 
     execSync(
-      `pwd && ls --all && npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`
+      `npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`
     );
 
     const outputs = JSON.parse(execSync(`cat ./cdk-outputs.json`).toString());
