@@ -1,6 +1,6 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'N2P UI Infrastructure Action'
+description: 'Deploys or Destroys the N2P UI Infrastructure'
+author: 'net2phone'
 
 inputs:
   name:
@@ -34,4 +34,4 @@ outputs:
 
 runs:
   using: node20
-  main: dist/index.js
+  main: index.js

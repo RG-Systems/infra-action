@@ -3,11 +3,11 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "NodeNext",
-    "rootDir": "./",
+    "rootDir": "./src",
     "moduleResolution": "NodeNext",
     "baseUrl": "./",
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./",
     "noImplicitAny": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -34,10 +34,10 @@
     ]
   },
   "exclude": [
+    "./cdk",
     "./dist",
     "./node_modules",
     "./__tests__",
     "./coverage",
-    "cdk.out"
   ],
 }

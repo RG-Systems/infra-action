@@ -2,7 +2,7 @@
   "name": "n2p-ui-infra-action",
   "description": "GitHub Action to manage infra for front-end",
   "version": "0.0.0",
-  "author": "",
+  "author": "net2phone",
   "private": true,
   "keywords": [
     "actions",
@@ -10,7 +10,7 @@
     "setup"
   ],
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./index.js"
   },
   "engines": {
     "node": ">=20"
@@ -22,7 +22,7 @@
     "format:write": "prettier --write **/*.ts",
     "format:check": "prettier --check **/*.ts",
     "lint": "npx eslint . -c ./.github/linters/.eslintrc.yml",
-    "package": "ncc build src/index.ts --license licenses.txt",
+    "package": "ncc build src/index.ts -o ./ --license licenses.txt",
     "package:watch": "npm run package -- --watch",
     "test": "jest",
     "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package"
