@@ -8,7 +8,10 @@ export async function run(): Promise<void> {
     const { vars, stack, action, folder } = getInputs();
 
     execSync(`echo "${vars.join('\n')}" > .env`);
-    core.debug(`.env: ${execSync(`cat .env`).toString()}`);
+    core.debug(`.env:\n${execSync(`cat .env`).toString()}`);
+
+    core.debug(`list of files:\n${execSync(`ls -la`).toString()}`);
+    core.debug(`cdk.json:\n${execSync(`cat cdk.json`).toString()}`);
 
     execSync(
       `npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`
