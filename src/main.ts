@@ -1,7 +1,9 @@
 import * as core from '@actions/core';
 import { execSync } from 'child_process';
+
 import { getInputs } from './getInputs';
 import { setOutputs } from './setOutputs';
+import CDK_CONFIG from './cdk.json';
 
 const CDK_ARGS = `--require-approval never --outputs-file cdk-outputs.json`;
 
@@ -14,7 +16,7 @@ export async function run(): Promise<void> {
     execSync(`echo "${vars.join('\n')}" > .env`);
     core.debug(`>>> .env:\n${execSync(`cat .env`).toString()}`);
 
-    execSync(`echo $CDK_CONFIG > ~/.cdk.json`);
+    execSync(`echo ${CDK_CONFIG} > ~/.cdk.json`);
     core.debug(`>>> cdk.json:\n${execSync(`cat cdk.json`).toString()}`);
 
     execSync(`npx cdk ${action} ${stack} ${CDK_ARGS}`);

@@ -13,6 +13,7 @@
     "strict": true,
     "skipLibCheck": true,
     "newLine": "lf",
+    "resolveJsonModule": true,
     "lib": [
       "es2020",
       "dom"
