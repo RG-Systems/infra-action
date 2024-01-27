@@ -13,9 +13,10 @@ export async function run(): Promise<void> {
     core.debug(`>>> .env:\n${execSync(`cat .env`).toString()}`);
 
     core.debug(`>>> List of files:\n${execSync(`ls -la`).toString()}`);
-    core.debug(`>>> cdk.json:\n${execSync(`cat cdk.json`).toString()}`);
 
     execSync(`echo $CDK_CONFIG > ~/.cdk.json`);
+    core.debug(`>>> cdk.json:\n${execSync(`cat cdk.json`).toString()}`);
+
     execSync(`npx cdk ${action} ${stack} ${CDK_ARGS}`);
 
     setOutputs({ stack, folder });
