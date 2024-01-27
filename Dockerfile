@@ -1,5 +1,5 @@
 # Set the base image to use for subsequent instructions
-FROM node:slim
+FROM node:lts-alpine
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
