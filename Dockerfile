@@ -13,4 +13,6 @@ COPY . .
 
 RUN yarn all
 
+COPY cdk.json ~/
+
 ENTRYPOINT ["node", "/usr/src/app/dist/index.js"]
