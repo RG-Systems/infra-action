@@ -9,7 +9,7 @@ type Params = {
 export const setOutputs = ({ stack, folder }: Params): void => {
   const outputs = JSON.parse(execSync(`cat ./cdk-outputs.json`).toString());
 
-  core.debug(`Outputs:\n${JSON.stringify(outputs)}`);
+  core.debug(`>>> Outputs:\n${JSON.stringify(outputs)}`);
 
   // Set outputs for other workflow steps to use
   core.setOutput('folder', folder);
