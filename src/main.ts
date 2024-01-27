@@ -3,10 +3,10 @@ import { execSync } from 'child_process';
 import { getInputs } from './getInputs';
 import { setOutputs } from './setOutputs';
 
+const CDK_ARGS = `--require-approval never --outputs-file cdk-outputs.json`;
+
 export async function run(): Promise<void> {
   try {
-    core.debug(`>>> Current dir:\n${execSync(`pwd`).toString()}`);
-
     const { vars, stack, action, folder } = getInputs();
 
     execSync(`echo "${vars.join('\n')}" > .env`);
@@ -15,9 +15,8 @@ export async function run(): Promise<void> {
     core.debug(`>>> List of files:\n${execSync(`ls -la`).toString()}`);
     core.debug(`>>> cdk.json:\n${execSync(`cat cdk.json`).toString()}`);
 
-    execSync(
-      `npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`
-    );
+    execSync(`echo $CDK_CONFIG > ~/.cdk.json`);
+    execSync(`npx cdk ${action} ${stack} ${CDK_ARGS}`);
 
     setOutputs({ stack, folder });
   } catch (error) {

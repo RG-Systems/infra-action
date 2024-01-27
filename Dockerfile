@@ -13,6 +13,6 @@ COPY . .
 
 RUN yarn all
 
-COPY cdk.json ~/
+ENV CDK_CONFIG="$(cat cdk.json)"
 
 ENTRYPOINT ["node", "/usr/src/app/dist/index.js"]
