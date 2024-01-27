@@ -10,7 +10,9 @@ export async function run(): Promise<void> {
     execSync(`echo "${vars.join('\n')}" > .env`);
     core.debug(`.env: ${execSync(`cat .env`).toString()}`);
 
-    execSync(`npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`);
+    execSync(
+      `npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`
+    );
 
     setOutputs({ stack, folder });
   } catch (error) {

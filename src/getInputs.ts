@@ -1,6 +1,13 @@
 import * as github from '@actions/github';
 
-export const getInputs = () => {
+type Result = {
+  vars: string[];
+  stack: string;
+  folder: string;
+  action: string;
+};
+
+export const getInputs = (): Result => {
   const pr = github.context?.payload?.pull_request?.number;
   const folder = github.context?.sha.slice(0, 7);
   const variables = JSON.parse(process.env.VARIABLES || '{}');
@@ -21,5 +28,5 @@ export const getInputs = () => {
     vars.push(`${key}=${value}`);
   }
 
-  return { vars, stack, folder, action }
+  return { vars, stack, folder, action };
 };

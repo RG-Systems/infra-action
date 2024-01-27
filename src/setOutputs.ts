@@ -6,7 +6,7 @@ type Params = {
   folder: string;
 };
 
-export const setOutputs = ({ stack, folder }: Params) => {
+export const setOutputs = ({ stack, folder }: Params): void => {
   const outputs = JSON.parse(execSync(`cat ./cdk-outputs.json`).toString());
 
   core.debug(`Outputs: ${JSON.stringify(outputs)}`);
