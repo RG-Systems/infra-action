@@ -1,46 +1,18 @@
 import * as core from '@actions/core';
-import * as github from '@actions/github';
 import { execSync } from 'child_process';
+import { getInputs } from './getInputs';
+import { setOutputs } from './setOutputs';
 
 export async function run(): Promise<void> {
   try {
-    const pr = github.context?.payload?.pull_request?.number;
-    const folder = github.context?.sha.slice(0, 7);
-    const variables = JSON.parse(process.env.VARIABLES || '{}');
-    const action = process.env.ACTION;
-    const environment = process.env.ENVIRONMENT;
-    const project = process.env.PROJECT_NAME;
-    const domain = variables?.DOMAIN;
-    const vars = [];
-    const stack = pr
-      ? `${pr}-${environment}-${project}`
-      : `${environment}-${project}`;
-
-    if (!domain) throw new Error('Missing DOMAIN variable');
-    if (!project) throw new Error('Missing name input');
-    if (!action) throw new Error('Missing action input');
-
-    for (const [key, value] of Object.entries(variables)) {
-      vars.push(`${key}=${value}`);
-    }
+    const { vars, stack, action, folder } = getInputs();
 
     execSync(`echo "${vars.join('\n')}" > .env`);
+    core.debug(`.env: ${execSync(`cat .env`).toString()}`);
 
-    core.debug(execSync('cat .env').toString());
+    execSync(`npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`);
 
-    execSync(
-      `npx cdk ${action} ${stack} --require-approval never --outputs-file cdk-outputs.json`
-    );
-
-    const outputs = JSON.parse(execSync(`cat ./cdk-outputs.json`).toString());
-
-    core.debug(JSON.stringify(outputs, null, 2));
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('folder', folder);
-    core.setOutput('bucket', outputs[stack].BucketName);
-    core.setOutput('id', outputs[stack].DistributionId);
-    core.setOutput('url', outputs[stack].DeploymentUrl);
+    setOutputs({ stack, folder });
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);
