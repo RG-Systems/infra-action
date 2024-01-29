@@ -36,7 +36,7 @@ export async function run(): Promise<void> {
     execSync(`echo "${vars.join('\n')}" > .env`);
     core.debug(`>>> .env:\n${execSync(`cat .env`).toString()}`);
 
-    execSync(`echo ${JSON.stringify(CDK_CONFIG, null, 2)} > ~/.cdk.json`);
+    execSync(`echo "${JSON.stringify(CDK_CONFIG, null, 2)}" > ~/.cdk.json`);
     core.debug(`>>> cdk.json:\n${execSync(`cat cdk.json`).toString()}`);
 
     execSync(`npx cdk ${action} ${stack} ${CDK_ARGS}`);
