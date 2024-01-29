@@ -33,12 +33,5 @@ outputs:
     description: 'The distribution url'
 
 runs:
-  using: docker
-  image: Dockerfile
-  env:
-    AWS_ACCOUNT: ${{ inputs.aws-account }}
-    AWS_REGION: ${{ inputs.aws-region }}
-    PROJECT_NAME: ${{ inputs.name }}
-    ACTION: ${{ inputs.action }}
-    ENVIRONMENT: ${{ inputs.environment }}
-    VARIABLES: ${{ inputs.variables }}
+  using: node20
+  main: 'dist/index.js'
