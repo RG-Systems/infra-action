@@ -32,6 +32,7 @@ export async function run(): Promise<void> {
       vars.push(`${key}=${value}`);
     }
 
+    execSync(`echo "[default]\nregion=${AWS_REGION}" > ~/.aws/config`);
     execSync(`echo "${vars.join('\n')}" > .env`);
     core.debug(`>>> .env:\n${execSync(`cat .env`).toString()}`);
 
