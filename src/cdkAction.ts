@@ -1,7 +1,12 @@
-import type { CreateStackOutput } from 'aws-sdk/clients/cloudformation';
-import CloudFormation from 'aws-sdk/clients/cloudformation';
+import type {
+  CreateStackCommandOutput,
+  DeleteStackCommandOutput
+} from '@aws-sdk/client-cloudformation';
+
+import { CloudFormation } from '@aws-sdk/client-cloudformation';
 import { PriceClass } from 'aws-cdk-lib/aws-cloudfront';
 import * as cdk from 'aws-cdk-lib';
+
 import { Stack } from './stack';
 
 type Params = {
@@ -29,7 +34,7 @@ export const cdkAction = async ({
   path,
   domain,
   env
-}: Params): Promise<CreateStackOutput | unknown> => {
+}: Params): Promise<CreateStackCommandOutput | DeleteStackCommandOutput> => {
   const app = new cdk.App();
 
   const priceClass = optimized
@@ -55,35 +60,13 @@ export const cdkAction = async ({
   });
 
   if (action === 'destroy') {
-    return cloudFormation
-      .deleteStack(
-        {
-          StackName: stackName
-        },
-        (err, data) => {
-          if (err) {
-            console.error('Error deleting stack', err);
-          } else {
-            console.log('Stack deletion initiated:', data);
-          }
-        }
-      )
-      .promise();
+    return cloudFormation.deleteStack({
+      StackName: stackName
+    });
   }
 
-  return cloudFormation
-    .createStack(
-      {
-        StackName: stackName,
-        TemplateBody: JSON.stringify(cloudFormationTemplate)
-      },
-      (err, data) => {
-        if (err) {
-          console.error('Error creating stack', err);
-        } else {
-          console.log('Stack creation initiated:', data);
-        }
-      }
-    )
-    .promise();
+  return cloudFormation.createStack({
+    StackName: stackName,
+    TemplateBody: JSON.stringify(cloudFormationTemplate)
+  });
 };

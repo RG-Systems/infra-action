@@ -1,4 +1,4 @@
-import type { CreateStackOutput } from 'aws-sdk/clients/cloudformation';
+import type { CreateStackCommandOutput, DeleteStackCommandOutput } from '@aws-sdk/client-cloudformation';
 type Params = {
     action: 'deploy' | 'destroy';
     optimized: boolean;
@@ -13,5 +13,5 @@ type Params = {
         region: string;
     };
 };
-export declare const cdkAction: ({ action, optimized, stackName, environment, project, identity, path, domain, env }: Params) => Promise<CreateStackOutput | unknown>;
+export declare const cdkAction: ({ action, optimized, stackName, environment, project, identity, path, domain, env }: Params) => Promise<CreateStackCommandOutput | DeleteStackCommandOutput>;
 export {};
