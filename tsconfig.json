@@ -14,10 +14,7 @@
     "skipLibCheck": true,
     "newLine": "lf",
     "resolveJsonModule": true,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020"],
     "declaration": true,
     "strictNullChecks": true,
     "noImplicitThis": true,
