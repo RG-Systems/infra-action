@@ -3,6 +3,7 @@ import type {
   DeleteStackCommandOutput
 } from '@aws-sdk/client-cloudformation';
 
+import { STSClient } from '@aws-sdk/client-sts';
 import { CloudFormation } from '@aws-sdk/client-cloudformation';
 import { PriceClass } from 'aws-cdk-lib/aws-cloudfront';
 import * as cdk from 'aws-cdk-lib';
@@ -55,8 +56,13 @@ export const cdkAction = async ({
     .synth()
     .getStackArtifact(stack.artifactId).template;
 
-  const cloudFormation = new CloudFormation({
+  const stsClient = new STSClient({
     region: env.region
+  });
+
+  const cloudFormation = new CloudFormation({
+    region: env.region,
+    credentials: stsClient.config.credentials
   });
 
   if (action === 'destroy') {
