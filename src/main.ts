@@ -2,20 +2,22 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { execSync } from 'child_process';
 
-import { deploy } from './deploy';
+import { cdkAction } from './cdkAction';
 
 export async function run(): Promise<void> {
   try {
-    const AWS_REGION = core.getInput('AWS_REGION', { required: true });
-    const AWS_ACCOUNT = core.getInput('AWS_ACCOUNT', { required: true });
-    const identity = core.getInput('IDENTITY');
-    const optimized = core.getInput('OPTIMIZED') === 'true';
+    const AWS_REGION = core.getInput('aws-region', { required: true });
+    const AWS_ACCOUNT = core.getInput('aws-account', { required: true });
+    const project = core.getInput('name', { required: true });
+    const action = core.getInput('action', { required: true }) as
+      | 'deploy'
+      | 'destroy';
+    const identity = core.getInput('identity');
+    const environment = core.getInput('environment') || 'tmp';
+    const optimized = core.getInput('optimized') === 'true';
+    const variables = JSON.parse(core.getInput('variables') || '{}');
     const pr = github.context?.payload?.pull_request?.number;
     const folder = github.context?.sha.slice(0, 7);
-    const variables = JSON.parse(core.getInput('VARIABLES') || '{}');
-    const action = core.getInput('ACTION', { required: true });
-    const environment = core.getInput('ENVIRONMENT') || 'tmp';
-    const project = core.getInput('PROJECT_NAME', { required: true });
     const domain = variables?.DOMAIN;
     const vars = [];
     const stackName = pr
@@ -33,7 +35,8 @@ export async function run(): Promise<void> {
     execSync(`echo "${vars.join('\n')}" > .env`);
     core.debug(`>>> .env:\n${execSync(`cat .env`).toString()}`);
 
-    const result = await deploy({
+    const result = await cdkAction({
+      action,
       optimized,
       stackName,
       environment,

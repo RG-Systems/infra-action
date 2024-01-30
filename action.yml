@@ -20,7 +20,10 @@ inputs:
     required: true
   variables:
     description: 'The variables to pass to the CDK'
-    required: true
+  identity:
+    description: 'The identity to use for the CDK'
+  optimized:
+    description: 'Whether to optimize the build'
 
 outputs:
   folder:
