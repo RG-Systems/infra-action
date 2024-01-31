@@ -7,6 +7,24 @@ import * as cdk from 'aws-cdk-lib';
 
 import { Stack } from './stack';
 
+const CDK_CONFIG = {
+  context: {
+    '@aws-cdk/core:checkSecretUsage': true,
+    '@aws-cdk/aws-iam:minimizePolicies': true,
+    '@aws-cdk/core:validateSnapshotRemovalPolicy': true,
+    '@aws-cdk/aws-s3:createDefaultLoggingPolicy': true,
+    '@aws-cdk/core:enablePartitionLiterals': true,
+    '@aws-cdk/aws-events:eventsTargetQueueSameAccount': true,
+    '@aws-cdk/aws-iam:standardizedServicePrincipals': true,
+    '@aws-cdk/aws-iam:importedRoleStackSafeDefaultPolicyName': true,
+    '@aws-cdk/aws-s3:serverAccessLogsUseBucketPolicy': true,
+    '@aws-cdk/aws-route53-patters:useCertificate': true,
+    '@aws-cdk/customresources:installLatestAwsSdkDefault': false,
+    '@aws-cdk/core:includePrefixInUniqueNameGeneration': true,
+    '@aws-cdk/core:target-partitions': ['aws', 'aws-cn']
+  }
+};
+
 export async function run(): Promise<void> {
   try {
     const AWS_REGION = core.getInput('aws-region', { required: true });
@@ -33,6 +51,8 @@ export async function run(): Promise<void> {
 
     execSync(`echo "${vars.join('\n')}" > .env`);
     core.debug(`>>> .env:\n${execSync(`cat .env`).toString()}`);
+
+    execSync(`echo "${JSON.stringify(CDK_CONFIG)}" > ./cdk.json`);
 
     const app = new cdk.App();
 

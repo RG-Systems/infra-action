@@ -48,6 +48,7 @@ runs:
       shell: bash
       run: |
         aws cloudformation ${{ inputs.action }} \
+          --capabilities CAPABILITY_IAM \
           --template-file ./template.json \
           --stack-name ${{ steps.template.outputs.stack }} \
           --output json > ./outputs.json
