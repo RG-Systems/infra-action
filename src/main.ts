@@ -9,19 +9,10 @@ import { Stack } from './stack';
 
 const CDK_CONFIG = {
   context: {
-    '@aws-cdk/core:checkSecretUsage': true,
-    '@aws-cdk/aws-iam:minimizePolicies': true,
-    '@aws-cdk/core:validateSnapshotRemovalPolicy': true,
-    '@aws-cdk/aws-s3:createDefaultLoggingPolicy': true,
-    '@aws-cdk/core:enablePartitionLiterals': true,
-    '@aws-cdk/aws-events:eventsTargetQueueSameAccount': true,
-    '@aws-cdk/aws-iam:standardizedServicePrincipals': true,
-    '@aws-cdk/aws-iam:importedRoleStackSafeDefaultPolicyName': true,
-    '@aws-cdk/aws-s3:serverAccessLogsUseBucketPolicy': true,
-    '@aws-cdk/aws-route53-patters:useCertificate': true,
-    '@aws-cdk/customresources:installLatestAwsSdkDefault': false,
-    '@aws-cdk/core:includePrefixInUniqueNameGeneration': true,
-    '@aws-cdk/core:target-partitions': ['aws', 'aws-cn']
+    'aws-cdk:enableDiffNoFail': 'true',
+    '@aws-cdk/core:enableStackNameDuplicates': 'true',
+    '@aws-cdk/core:stackRelativeExports': 'true',
+    '@aws-cdk/core:newStyleStackSynthesis': true
   }
 };
 
@@ -52,7 +43,17 @@ export async function run(): Promise<void> {
     execSync(`echo "${vars.join('\n')}" > .env`);
     core.debug(`>>> .env:\n${execSync(`cat .env`).toString()}`);
 
-    execSync(`echo "${JSON.stringify(CDK_CONFIG)}" > ./cdk.json`);
+    const updatedConfig = {
+      ...CDK_CONFIG,
+      context: {
+        ...CDK_CONFIG.context,
+        [`availability-zones:account=${AWS_ACCOUNT}:region=${AWS_REGION}`]: [
+          AWS_REGION
+        ]
+      }
+    };
+
+    execSync(`echo "${JSON.stringify(updatedConfig, null, 2)}" > ./cdk.json`);
 
     const app = new cdk.App();
 
