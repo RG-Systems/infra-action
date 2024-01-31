@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { execSync } from 'child_process';
 
-import { cdkAction } from './cdkAction';
+import { createStack } from './createStack';
 
 export async function run(): Promise<void> {
   try {
@@ -35,8 +35,7 @@ export async function run(): Promise<void> {
     execSync(`echo "${vars.join('\n')}" > .env`);
     core.debug(`>>> .env:\n${execSync(`cat .env`).toString()}`);
 
-    const result = await cdkAction({
-      action,
+    const result = createStack({
       optimized,
       stackName,
       environment,
@@ -50,8 +49,8 @@ export async function run(): Promise<void> {
       }
     });
 
-    core.debug(`>>> result:\n${result}`);
-    core.setOutput('folder', folder);
+    core.debug(`>>> result:\n${JSON.stringify(result, null, 2)}`);
+    core.setOutput('stack', result.template);
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);

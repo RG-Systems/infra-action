@@ -6,9 +6,6 @@ inputs:
   name:
     description: 'The name of the project'
     required: true
-  action:
-    description: 'The action to perform "deploy" or "destroy"'
-    required: true
   environment:
     description: 'The environment to deploy to'
     default: tmp
@@ -26,14 +23,8 @@ inputs:
     description: 'Whether to optimize the build'
 
 outputs:
-  folder:
-    description: 'The folder to upload'
-  bucket:
-    description: 'The bucket to upload to'
-  id:
-    description: 'The distribution id'
-  url:
-    description: 'The distribution url'
+  stack:
+    description: 'The stack cloudformation outputs'
 
 runs:
   using: node20

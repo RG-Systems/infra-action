@@ -5,9 +5,9 @@ cd $(dirname $0)
 
 mkdir -p ../lib
 
-echo ">> Building AWS Lambda layer inside a docker image for Proxy Agent..."
+echo ">> Building AWS Lambda layer inside a docker image..."
 
-TAG='aws-lambda-node-proxy-agent'
+TAG='aws-lambda-layer'
 
 docker build -t ${TAG} .
 
