@@ -45,8 +45,8 @@ export async function run(): Promise<void> {
       }
     });
 
-    core.debug(`>>> result:\n${JSON.stringify(result, null, 2)}`);
-    core.setOutput('stack', result.template);
+    core.debug(`>>> result:\n${JSON.stringify(result.template, null, 2)}`);
+    core.setOutput('stack', JSON.stringify(result.template, null, 2));
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);
