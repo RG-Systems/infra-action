@@ -51,9 +51,7 @@ export async function run(): Promise<void> {
       }
     });
 
-    const stackArtifact = app.synth().getStackArtifact(stack.artifactId);
-
-    core.debug(`>>> stackArtifact:\n${JSON.stringify(stackArtifact, null, 2)}`);
+    app.synth().getStackArtifact(stack.artifactId);
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);
