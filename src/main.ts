@@ -9,9 +9,6 @@ export async function run(): Promise<void> {
     const AWS_REGION = core.getInput('aws-region', { required: true });
     const AWS_ACCOUNT = core.getInput('aws-account', { required: true });
     const project = core.getInput('name', { required: true });
-    const action = core.getInput('action', { required: true }) as
-      | 'deploy'
-      | 'destroy';
     const identity = core.getInput('identity');
     const environment = core.getInput('environment') || 'tmp';
     const optimized = core.getInput('optimized') === 'true';
@@ -26,7 +23,6 @@ export async function run(): Promise<void> {
 
     if (!domain) throw new Error('Missing DOMAIN variable');
     if (!project) throw new Error('Missing name input');
-    if (!action) throw new Error('Missing action input');
 
     for (const [key, value] of Object.entries(variables)) {
       vars.push(`${key}=${value}`);
