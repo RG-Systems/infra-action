@@ -35,7 +35,7 @@ runs:
         aws-region: ${{ inputs.aws-region }}
     - id: template
       name: Create UI Cloudfront + S3 Cloudformation Template
-      uses: actions/create-template
+      uses: ./actions/create-template
       with:
         name: ${{ inputs.name }}
         aws-account: ${{ inputs.aws-account }}
