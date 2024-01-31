@@ -52,9 +52,7 @@ export async function run(): Promise<void> {
     });
 
     const stackArtifact = app.synth().getStackArtifact(stack.artifactId);
-    core.debug(
-      `>>> cat template file:\n${execSync(`cat ${stackArtifact?.templateFullPath}`).toString()}`
-    );
+    execSync(`cp ${stackArtifact.templateFullPath} ./template.json`);
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);
