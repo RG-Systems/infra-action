@@ -1,6 +1,6 @@
-name: 'N2P UI Infrastructure Action'
-description: 'Deploys or Destroys the N2P UI Infrastructure'
-author: 'net2phone'
+name: 'Create Cloudformation Template'
+description: 'Create UI CloudFront + S3 cloudformation template'
+author: 'therobertgrigorian'
 
 inputs:
   name:
@@ -23,8 +23,14 @@ inputs:
     description: 'Whether to optimize the build'
 
 outputs:
-  stack:
-    description: 'The stack cloudformation outputs'
+  folder:
+    description: 'The folder to upload'
+  bucket:
+    description: 'The bucket to upload to'
+  id:
+    description: 'The distribution id'
+  url:
+    description: 'The distribution url'
 
 runs:
   using: node20

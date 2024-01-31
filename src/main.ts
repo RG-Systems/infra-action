@@ -2,7 +2,10 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { execSync } from 'child_process';
 
-import { createStack } from './createStack';
+import { PriceClass } from 'aws-cdk-lib/aws-cloudfront';
+import * as cdk from 'aws-cdk-lib';
+
+import { Stack } from './stack';
 
 export async function run(): Promise<void> {
   try {
@@ -31,9 +34,12 @@ export async function run(): Promise<void> {
     execSync(`echo "${vars.join('\n')}" > .env`);
     core.debug(`>>> .env:\n${execSync(`cat .env`).toString()}`);
 
-    const result = createStack({
-      optimized,
-      stackName,
+    const app = new cdk.App();
+
+    const stack = new Stack(app, stackName, {
+      priceClass: optimized
+        ? PriceClass.PRICE_CLASS_ALL
+        : PriceClass.PRICE_CLASS_100,
       environment,
       project,
       identity,
@@ -45,8 +51,9 @@ export async function run(): Promise<void> {
       }
     });
 
-    core.debug(`>>> result:\n${JSON.stringify(result.template, null, 2)}`);
-    core.setOutput('stack', JSON.stringify(result.template, null, 2));
+    const stackArtifact = app.synth().getStackArtifact(stack.artifactId);
+
+    core.debug(`>>> stackArtifact:\n${JSON.stringify(stackArtifact, null, 2)}`);
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);
