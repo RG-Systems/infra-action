@@ -51,7 +51,15 @@ export async function run(): Promise<void> {
       }
     });
 
-    app.synth().getStackArtifact(stack.artifactId);
+    const stackArtifact = app.synth().getStackArtifact(stack.artifactId);
+    const fullPath = stackArtifact?.templateFullPath;
+    const template = stackArtifact?.template;
+    core.debug(
+      `>>> stackArtifact.templateFile: ${stackArtifact?.templateFile}`
+    );
+    core.debug(`>>> stackArtifact.templateFullPath: ${fullPath}`);
+    core.debug(`>>> stackArtifact.environment: ${stackArtifact?.environment}`);
+    core.debug(`>>> stackArtifact.template: ${template}`);
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);
