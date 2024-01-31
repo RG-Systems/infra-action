@@ -1,5 +1,16 @@
-FROM public.ecr.aws/sam/build-python3.8
+# base lambda image
+FROM public.ecr.aws/lambda/provided:latest
 
+#
+# versions
+#
+
+# KUBECTL_VERSION should not be changed at the moment, see https://github.com/aws/aws-cdk/issues/15736
+# Version 1.21.0 is not compatible with version 1.20 (and lower) of the server.
+ARG KUBECTL_VERSION=1.20.0 
+ARG HELM_VERSION=3.8.1
+
+USER root
 RUN mkdir -p /opt
 WORKDIR /tmp
 
@@ -11,34 +22,19 @@ RUN yum update -y \
     && yum install -y zip unzip wget tar gzip
 
 #
-# aws cli
+# kubectl
 #
 
-COPY requirements.txt ./
-RUN python -m pip install -r requirements.txt -t /opt/awscli
+RUN mkdir -p /opt/kubectl
+RUN cd /opt/kubectl && curl -LO "https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+RUN chmod +x /opt/kubectl/kubectl
 
 #
-# organize for self-contained usage
+# helm
 #
 
-RUN mv /opt/awscli/bin/aws /opt/awscli
-
-#
-# cleanup
-#
-
-RUN rm -rf \
-    /opt/awscli/pip* \
-    /opt/awscli/setuptools* \
-    && cd /opt/awscli/awscli/examples \
-    && ls | grep -v "global_options.rst" | xargs rm -rf
-
-#
-# Test that the CLI works
-#
-
-RUN yum install -y groff
-RUN /opt/awscli/aws help
+RUN mkdir -p /tmp/helm && wget -qO- https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz | tar -xvz -C /tmp/helm
+RUN mkdir -p /opt/helm && cp /tmp/helm/linux-amd64/helm /opt/helm/helm
 
 #
 # create the bundle
