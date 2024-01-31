@@ -1,20 +1,23 @@
-name: 'Create Cloudformation Template'
-description: 'Create UI CloudFront + S3 cloudformation template'
-author: 'therobertgrigorian'
+name: 'Create UI Cloudfront + S3 Cloudformation Template'
+description: 'Create UI Cloudfront + S3 Cloudformation Template'
+author: 'net2phone'
 
 inputs:
+  action:
+    description: 'The action to perform (deploy or delete-stack)'
+    required: true
   name:
     description: 'The name of the project'
     required: true
-  environment:
-    description: 'The environment to deploy to'
-    default: tmp
   aws-account:
     description: 'The AWS account to deploy to'
     required: true
   aws-region:
     description: 'The AWS region to deploy to'
     required: true
+  environment:
+    description: 'The environment to deploy to'
+    default: tmp
   variables:
     description: 'The variables to pass to the CDK'
   identity:
@@ -22,16 +25,29 @@ inputs:
   optimized:
     description: 'Whether to optimize the build'
 
-outputs:
-  folder:
-    description: 'The folder to upload'
-  bucket:
-    description: 'The bucket to upload to'
-  id:
-    description: 'The distribution id'
-  url:
-    description: 'The distribution url'
-
 runs:
-  using: node20
-  main: 'dist/index.js'
+  using: composite
+  steps:
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/RG-Systems-GH-Actions
+        role-session-name: vp-cdk-deploy
+        aws-region: ${{ inputs.aws-region }}
+    - id: template
+      name: Create UI Cloudfront + S3 Cloudformation Template
+      uses: ./actions/create-template
+      with:
+        name: ${{ inputs.name }}
+        aws-account: ${{ inputs.aws-account }}
+        aws-region: ${{ inputs.aws-region }}
+        environment: ${{ inputs.environment }}
+        variables: ${{ inputs.variables }}
+        identity: ${{ inputs.identity }}
+        optimized: ${{ inputs.optimized }}
+    - name: Deploy or destroy the Template
+      shell: bash
+      run: |
+        aws cloudformation ${{ inputs.action }} \
+          --template-file ./template.yaml \
+          --stack-name ${{ steps.template.outputs.stack }} \
+          --output json > ./outputs.json

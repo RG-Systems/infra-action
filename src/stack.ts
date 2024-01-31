@@ -178,6 +178,7 @@ export class Stack extends cdk.Stack {
       originAccessIdentity,
       `/${environment}`
     );
+
     distribution.addBehavior(`/env.json`, origin, {
       compress: true,
       allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
@@ -229,6 +230,10 @@ export class Stack extends cdk.Stack {
 
     new cdk.CfnOutput(this, 'BucketName', {
       value: bucket.bucketName
+    });
+
+    new cdk.CfnOutput(this, 'Variables', {
+      value: bucket.bucketArn
     });
   }
 }

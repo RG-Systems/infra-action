@@ -53,6 +53,8 @@ export async function run(): Promise<void> {
 
     const stackArtifact = app.synth().getStackArtifact(stack.artifactId);
     execSync(`cp ${stackArtifact.templateFullPath} ./template.json`);
+
+    core.setOutput('stack', stackName);
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message);
