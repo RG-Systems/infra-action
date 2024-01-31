@@ -28,7 +28,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v4
     - uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/RG-Systems-GH-Actions
@@ -36,7 +35,7 @@ runs:
         aws-region: ${{ inputs.aws-region }}
     - id: template
       name: Create UI Cloudfront + S3 Cloudformation Template
-      uses: ./actions/create-template
+      uses: actions/create-template
       with:
         name: ${{ inputs.name }}
         aws-account: ${{ inputs.aws-account }}
