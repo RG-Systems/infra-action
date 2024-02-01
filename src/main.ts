@@ -7,13 +7,11 @@ import * as cdk from 'aws-cdk-lib';
 
 import { Stack } from './stack';
 
-const CDK_CONFIG = {
-  context: {
-    'aws-cdk:enableDiffNoFail': 'true',
-    '@aws-cdk/core:enableStackNameDuplicates': 'true',
-    '@aws-cdk/core:stackRelativeExports': 'true',
-    '@aws-cdk/core:newStyleStackSynthesis': true
-  }
+const CDK_CONTEXT = {
+  'aws-cdk:enableDiffNoFail': 'true',
+  '@aws-cdk/core:enableStackNameDuplicates': 'true',
+  '@aws-cdk/core:stackRelativeExports': 'true',
+  '@aws-cdk/core:newStyleStackSynthesis': true
 };
 
 export async function run(): Promise<void> {
@@ -43,17 +41,18 @@ export async function run(): Promise<void> {
     execSync(`echo "${vars.join('\n')}" > .env`);
     core.debug(`>>> .env:\n${execSync(`cat .env`).toString()}`);
 
-    const updatedConfig = {
-      ...CDK_CONFIG,
-      context: {
-        ...CDK_CONFIG.context,
-        [`availability-zones:account=${AWS_ACCOUNT}:region=${AWS_REGION}`]: [
-          AWS_REGION
-        ]
-      }
-    };
-
-    execSync(`echo "${JSON.stringify(updatedConfig, null, 2)}" > ./cdk.json`);
+    execSync(
+      `echo "${JSON.stringify(
+        {
+          ...CDK_CONTEXT,
+          [`availability-zones:account=${AWS_ACCOUNT}:region=${AWS_REGION}`]: [
+            AWS_REGION
+          ]
+        },
+        null,
+        2
+      )}" > ./cdk.context.json`
+    );
 
     const app = new cdk.App();
 
