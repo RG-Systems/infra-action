@@ -54,6 +54,10 @@ export async function run(): Promise<void> {
       )}" > ./cdk.context.json`
     );
 
+    core.debug(
+      `>>> cdk.context.json:\n${execSync(`cat ./cdk.context.json`).toString()}`
+    );
+
     const app = new cdk.App();
 
     const stack = new Stack(app, stackName, {
