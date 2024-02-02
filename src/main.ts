@@ -36,10 +36,7 @@ export async function run(): Promise<void> {
 
     const app = new cdk.App();
 
-    app.node.setContext(
-      `availability-zones:account=${AWS_ACCOUNT}:region=${AWS_REGION}`,
-      [AWS_REGION]
-    );
+    app.node.setContext('@aws-cdk/core:availabilityZones', [AWS_REGION]);
 
     const stack = new Stack(app, stackName, {
       priceClass: optimized
