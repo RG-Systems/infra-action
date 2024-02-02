@@ -7,13 +7,6 @@ import * as cdk from 'aws-cdk-lib';
 
 import { Stack } from './stack';
 
-const CDK_CONTEXT = {
-  'aws-cdk:enableDiffNoFail': 'true',
-  '@aws-cdk/core:enableStackNameDuplicates': 'true',
-  '@aws-cdk/core:stackRelativeExports': 'true',
-  '@aws-cdk/core:newStyleStackSynthesis': true
-};
-
 export async function run(): Promise<void> {
   try {
     const AWS_REGION = core.getInput('aws-region', { required: true });
@@ -41,24 +34,16 @@ export async function run(): Promise<void> {
     execSync(`echo "${vars.join('\n')}" > .env`);
     core.debug(`>>> .env:\n${execSync(`cat .env`).toString()}`);
 
-    execSync(
-      `echo "${JSON.stringify(
-        {
-          ...CDK_CONTEXT,
-          [`availability-zones:account=${AWS_ACCOUNT}:region=${AWS_REGION}`]: [
-            AWS_REGION
-          ]
-        },
-        null,
-        2
-      )}" > ./cdk.context.json`
-    );
-
-    core.debug(
-      `>>> cdk.context.json:\n${execSync(`cat ./cdk.context.json`).toString()}`
-    );
-
     const app = new cdk.App();
+
+    app.node.setContext(
+      `availability-zones:account=${AWS_ACCOUNT}:region=${AWS_REGION}`,
+      [AWS_REGION]
+    );
+    app.node.setContext('aws-cdk:enableDiffNoFail', true);
+    app.node.setContext('@aws-cdk/core:enableStackNameDuplicates', true);
+    app.node.setContext('@aws-cdk/core:stackRelativeExports', true);
+    app.node.setContext('@aws-cdk/core:newStyleStackSynthesis', true);
 
     const stack = new Stack(app, stackName, {
       priceClass: optimized
