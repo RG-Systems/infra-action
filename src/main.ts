@@ -53,6 +53,9 @@ export async function run(): Promise<void> {
       }
     });
 
+    core.debug(`>>> domain: ${stack.domain}`);
+    core.debug(`>>> zone: ${stack.zone}`);
+
     const stackArtifact = app.synth().getStackArtifact(stack.artifactId);
     execSync(`cp ${stackArtifact.templateFullPath} ./template.json`);
 

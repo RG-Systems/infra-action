@@ -19,6 +19,9 @@ type Props = cdk.StackProps & {
 };
 
 export class Stack extends cdk.Stack {
+  zone: string;
+  domain: string;
+
   constructor(
     scope: Construct,
     id: string,
@@ -59,8 +62,10 @@ export class Stack extends cdk.Stack {
   private getOriginAccessIdentity(
     identity?: string
   ): cloudfront.OriginAccessIdentity {
-    if (!identity)
+    if (!identity) {
       return new cloudfront.OriginAccessIdentity(this, 'OriginAccessIdentity');
+    }
+
     const oai = cloudfront.OriginAccessIdentity.fromOriginAccessIdentityId(
       this,
       'OriginAccessIdentity',
@@ -104,6 +109,8 @@ export class Stack extends cdk.Stack {
     if (domain) {
       const [, ...domains] = domain.split('.');
       const domainName = domains.join('.');
+      this.zone = domainName;
+      this.domain = domain;
       return route53.HostedZone.fromLookup(this, 'Zone', { domainName });
     }
 

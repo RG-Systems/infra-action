@@ -10,6 +10,8 @@ type Props = cdk.StackProps & {
     identity?: string;
 };
 export declare class Stack extends cdk.Stack {
+    zone: string;
+    domain: string;
     constructor(scope: Construct, id: string, { environment, path, domain, project, priceClass, identity, ...props }: Props);
     private getOriginAccessIdentity;
     private getBucket;
