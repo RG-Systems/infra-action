@@ -36,14 +36,10 @@ export async function run(): Promise<void> {
 
     const app = new cdk.App();
 
-    app.node.setContext('aws-cdk:enableDiffNoFail', true);
-    app.node.setContext('@aws-cdk/core:newStyleStackSynthesis', true);
     app.node.setContext(
       `availability-zones:account=${AWS_ACCOUNT}:region=${AWS_REGION}`,
       [AWS_REGION]
     );
-
-    execSync(`>>> cdk context:\n${app.node.tryGetContext('cdk')}`);
 
     const stack = new Stack(app, stackName, {
       priceClass: optimized
