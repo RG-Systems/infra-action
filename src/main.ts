@@ -43,6 +43,8 @@ export async function run(): Promise<void> {
       [AWS_REGION]
     );
 
+    execSync(`>>> cdk context:\n${app.node.tryGetContext('cdk')}`);
+
     const stack = new Stack(app, stackName, {
       priceClass: optimized
         ? PriceClass.PRICE_CLASS_ALL

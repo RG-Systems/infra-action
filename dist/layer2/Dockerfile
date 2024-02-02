@@ -1,7 +1,5 @@
-# base lambda image
-FROM public.ecr.aws/lambda/nodejs:latest
+FROM public.ecr.aws/sam/build-python3.8
 
-USER root
 RUN mkdir -p /opt
 WORKDIR /tmp
 
@@ -10,15 +8,37 @@ WORKDIR /tmp
 #
 
 RUN yum update -y \
-    && yum install -y zip
+    && yum install -y zip unzip wget tar gzip
 
 #
-# install nodejs dependencies: proxy-agent
+# aws cli
 #
 
-RUN mkdir -p /opt/nodejs
-COPY package*.json /opt/nodejs/
-RUN cd /opt/nodejs && npm ci && rm package*.json
+COPY requirements.txt ./
+RUN python -m pip install -r requirements.txt -t /opt/awscli
+
+#
+# organize for self-contained usage
+#
+
+RUN mv /opt/awscli/bin/aws /opt/awscli
+
+#
+# cleanup
+#
+
+RUN rm -rf \
+    /opt/awscli/pip* \
+    /opt/awscli/setuptools* \
+    && cd /opt/awscli/awscli/examples \
+    && ls | grep -v "global_options.rst" | xargs rm -rf
+
+#
+# Test that the CLI works
+#
+
+RUN yum install -y groff
+RUN /opt/awscli/aws help
 
 #
 # create the bundle
