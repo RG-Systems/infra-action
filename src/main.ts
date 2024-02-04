@@ -55,7 +55,7 @@ export async function run(): Promise<void> {
 
     const { directory } = app.synth();
 
-    execSync(`cp -r ${directory} cdk.out`);
+    execSync(`cp -r ${directory}/* ./`);
 
     execSync(`npx cdk deploy --require-approval never --all --ci`);
 
