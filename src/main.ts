@@ -13,6 +13,7 @@ export async function run(): Promise<void> {
     const AWS_ACCOUNT = core.getInput('aws-account', { required: true });
     const project = core.getInput('name', { required: true });
     const identity = core.getInput('identity');
+    const zoneID = core.getInput('zone');
     const environment = core.getInput('environment') || 'tmp';
     const optimized = core.getInput('optimized') === 'true';
     const variables = JSON.parse(core.getInput('variables') || '{}');
@@ -42,19 +43,17 @@ export async function run(): Promise<void> {
       priceClass: optimized
         ? PriceClass.PRICE_CLASS_ALL
         : PriceClass.PRICE_CLASS_100,
+      path: folder,
       environment,
       project,
       identity,
-      path: folder,
+      zoneID,
       domain,
       env: {
         account: AWS_ACCOUNT,
         region: AWS_REGION
       }
     });
-
-    core.debug(`>>> domain: ${stack.domain}`);
-    core.debug(`>>> zone: ${stack.zone}`);
 
     const stackArtifact = app.synth().getStackArtifact(stack.artifactId);
     execSync(`cp ${stackArtifact.templateFullPath} ./template.json`);

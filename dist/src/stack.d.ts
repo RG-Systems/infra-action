@@ -8,11 +8,10 @@ type Props = cdk.StackProps & {
     project?: string;
     priceClass?: cloudfront.PriceClass;
     identity?: string;
+    zoneID?: string;
 };
 export declare class Stack extends cdk.Stack {
-    zone: string;
-    domain: string;
-    constructor(scope: Construct, id: string, { environment, path, domain, project, priceClass, identity, ...props }: Props);
+    constructor(scope: Construct, id: string, { environment, path, domain, project, priceClass, identity, zoneID, ...props }: Props);
     private getOriginAccessIdentity;
     private getBucket;
     private getZone;

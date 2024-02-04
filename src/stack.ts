@@ -16,12 +16,10 @@ type Props = cdk.StackProps & {
   project?: string;
   priceClass?: cloudfront.PriceClass;
   identity?: string;
+  zoneID?: string;
 };
 
 export class Stack extends cdk.Stack {
-  zone: string;
-  domain: string;
-
   constructor(
     scope: Construct,
     id: string,
@@ -32,6 +30,7 @@ export class Stack extends cdk.Stack {
       project,
       priceClass,
       identity,
+      zoneID,
       ...props
     }: Props
   ) {
@@ -39,7 +38,7 @@ export class Stack extends cdk.Stack {
 
     const originAccessIdentity = this.getOriginAccessIdentity(identity);
     const bucket = this.getBucket(project || id, originAccessIdentity);
-    const zone = this.getZone(domain);
+    const zone = this.getZone(domain, zoneID);
     const distribution = this.getDistribution(
       bucket,
       originAccessIdentity,
@@ -55,6 +54,7 @@ export class Stack extends cdk.Stack {
       originAccessIdentity,
       environment
     );
+
     this.createSubdomainRecords(distribution, zone, domain);
     this.createOutput(distribution, bucket, domain);
   }
@@ -105,13 +105,17 @@ export class Stack extends cdk.Stack {
     return bucket;
   }
 
-  private getZone(domain?: string): route53.IHostedZone | undefined {
+  private getZone(
+    domain?: string,
+    zoneID?: string
+  ): route53.IHostedZone | undefined {
     if (domain) {
       const [, ...domains] = domain.split('.');
       const domainName = domains.join('.');
-      this.zone = domainName;
-      this.domain = domain;
-      return route53.HostedZone.fromLookup(this, 'Zone', { domainName });
+      return route53.HostedZone.fromHostedZoneAttributes(this, 'Zone', {
+        hostedZoneId: zoneID || '',
+        zoneName: domainName
+      });
     }
 
     return undefined;
