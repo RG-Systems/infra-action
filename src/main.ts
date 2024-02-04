@@ -37,9 +37,7 @@ export async function run(): Promise<void> {
 
     const app = new cdk.App();
 
-    app.node.setContext('@aws-cdk/core:availability-zones', [AWS_REGION]);
-
-    const stack = new Stack(app, stackName, {
+    new Stack(app, stackName, {
       priceClass: optimized
         ? PriceClass.PRICE_CLASS_ALL
         : PriceClass.PRICE_CLASS_100,
@@ -55,8 +53,11 @@ export async function run(): Promise<void> {
       }
     });
 
-    const stackArtifact = app.synth().getStackArtifact(stack.artifactId);
-    execSync(`cp ${stackArtifact.templateFullPath} ./template.json`);
+    const { directory } = app.synth();
+
+    execSync(`cp -r ${directory} cdk.out`);
+
+    execSync(`npx cdk deploy --require-approval never --all --ci`);
 
     core.setOutput('stack', stackName);
   } catch (error) {
