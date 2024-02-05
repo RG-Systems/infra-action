@@ -20,10 +20,12 @@ else
   npx cdk $CDK_ACTION $STACK --require-approval never --ci --outputs-file cdk-outputs.json
 
   # Return the result of the deployment
-  BUCKET=$(jq --arg key "$STACK" '.[$key].BucketName' cdk-outputs.json) | sed -e 's/"//g'
+  BUCKET=$(jq --arg key "$STACK" '.[$key].BucketName' cdk-outputs.json)
+  BUCKET=$(echo $BUCKET | sed -e 's/"//g')
   echo "bucket=$BUCKET" >> $GITHUB_OUTPUT
   echo "id=$(jq --arg key "$STACK" '.[$key].DistributionId' cdk-outputs.json)" >> $GITHUB_OUTPUT
-  URL=$(jq --arg key "$STACK" '.[$key].DeploymentUrl' cdk-outputs.json) | sed -e 's/"//g'
+  URL=$(jq --arg key "$STACK" '.[$key].DeploymentUrl' cdk-outputs.json)
+  URL=$(echo $URL | sed -e 's/"//g')
   echo "url=$URL" >> $GITHUB_OUTPUT
 
   # Print the outputs
