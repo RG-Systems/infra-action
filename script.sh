@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Copy need files to the deployment directory
+mkdir cdk
 cp -r $GITHUB_ACTION_PATH/* ./cdk
 cd ./cdk
 yarn install --frozen-lockfile
