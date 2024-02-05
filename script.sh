@@ -3,10 +3,10 @@ cd ./cdk
 
 yarn install --frozen-lockfile
 
-export STACK=$PROJECT_NAME-$ENV
+export STACK=$PROJECT_NAME-$ENVIRONMENT
 
-if [ $ENV = "tmp" ]; then
-  STACK=$PROJECT_NAME-$ENV-$PR_NUMBER
+if [ $ENVIRONMENT = "tmp" ]; then
+  STACK=$PROJECT_NAME-$ENVIRONMENT-$GITHUB_REF_NAME
 fi
 
 echo "RESULT >>> STACK -> $STACK"
