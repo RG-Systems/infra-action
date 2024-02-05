@@ -1,4 +1,7 @@
 #!/bin/bash
+
+echo ">>> VARIABLES: $VARIABLES"
+
 cd ./cdk
 
 yarn install --frozen-lockfile
@@ -9,14 +12,15 @@ if [ $ENVIRONMENT = "tmp" ]; then
   STACK=$PROJECT_NAME-$ENVIRONMENT-$GITHUB_REF_NAME
 fi
 
-echo "RESULT >>> STACK -> $STACK"
+echo ">>> STACK -> $STACK"
 
 # Check if the stack exists else create it
 if [ $CDK_ACTION = "destroy" ]; then
-  echo "RESULT >>> Destroying the stack"
+  echo "R>>> Destroying the stack"
   npx cdk destroy $STACK --force --require-approval never
   exit 0
 else
+  echo ">>> Deploying the stack"
   npx cdk $CDK_ACTION $STACK --require-approval never --ci --outputs-file cdk-outputs.json
 
   # Return the result of the deployment
@@ -31,5 +35,3 @@ else
   cat cdk-outputs.json
   exit 0
 fi
-
-echo "VARIABLES: $VARIABLES"
