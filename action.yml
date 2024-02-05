@@ -3,29 +3,32 @@ description: 'Create UI Cloudfront + S3 Cloudformation Template'
 author: 'net2phone'
 
 inputs:
-  action:
-    description: 'The action to perform (deploy or delete-stack)'
-    required: true
   name:
     description: 'The name of the project'
     required: true
+  action:
+    description: 'The action to perform (deploy or delete-stack)'
+    required: true
+  domain:
+    description: 'The custom domain'
+    required: false
+  environment:
+    description: 'The environment to deploy to'
+    default: tmp
+  optimized:
+    description: 'Whether to optimize the build'
   aws-account:
     description: 'The AWS account to deploy to'
     required: true
   aws-region:
     description: 'The AWS region to deploy to'
     required: true
-  environment:
-    description: 'The environment to deploy to'
-    default: tmp
-  variables:
-    description: 'The variables to pass to the CDK'
-  identity:
-    description: 'The identity to use for the CDK'
-  zone:
-    description: 'The zone id to use for the CDK'
-  optimized:
-    description: 'Whether to optimize the build'
+  aws-zone-id:
+    description: 'The AWS zone id to deploy to'
+    required: true
+  aws-origin-access-identity:
+    description: 'The AWS origin access identity to use'
+    required: true
 
 runs:
   using: composite
@@ -35,22 +38,15 @@ runs:
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/RG-Systems-GH-Actions
         role-session-name: vp-cdk-deploy
         aws-region: ${{ inputs.aws-region }}
-    - id: template
-      name: Create UI Cloudfront + S3 Cloudformation Template
-      uses: RG-Systems/infra-action/actions/create-template@main
-      with:
-        name: ${{ inputs.name }}
-        aws-account: ${{ inputs.aws-account }}
-        aws-region: ${{ inputs.aws-region }}
-        environment: ${{ inputs.environment }}
-        variables: ${{ inputs.variables }}
-        identity: ${{ inputs.identity }}
-        optimized: ${{ inputs.optimized }}
-    - name: Deploy or destroy the Template
+    - name: Create UI Cloudfront + S3 Cloudformation Template
       shell: bash
-      run: |
-        aws cloudformation ${{ inputs.action }} \
-          --capabilities CAPABILITY_IAM \
-          --template-file ./template.json \
-          --stack-name ${{ steps.template.outputs.stack }} \
-          --output json > ./outputs.json
+      run: $GITHUB_ACTION_PATH/script.sh
+      env:
+        AWS_ACCOUNT: ${{ inputs.aws-account }}
+        AWS_REGION: ${{ inputs.aws-region }}
+        AWS_ORIGIN_ACCESS_IDENTITY: ${{ inputs.identity }}
+        AWS_ZONE_ID: ${{ inputs.aws-zone-id }}
+        PROJECT_NAME: ${{ inputs.name }}
+        ENVIRONMENT: ${{ inputs.environment }}
+        OPTIMIZED: ${{ inputs.optimized }}
+        CDK_ACTION: ${{ inputs.action }}
