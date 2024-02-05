@@ -1,6 +1,8 @@
 #!/bin/bash
 cd ./cdk
 
+yarn install --frozen-lockfile
+
 export STACK=$PROJECT_NAME-$ENV
 
 if [ $ENV = "tmp" ]; then
