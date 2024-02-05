@@ -36,7 +36,16 @@ export class Stack extends cdk.Stack {
       ...props
     }: Props
   ) {
-    super(scope, id, props);
+    super(scope, id, {
+      ...props,
+      tags: {
+        lob: 'tech_dev_n2p_office',
+        team_name: 'n2p-ui',
+        application_group: 'n2p',
+        application: `n2p-${project}`,
+        opsgenie_service_name: 'N2P UI',
+      },
+    });
 
     const originAccessIdentity = this.getOriginAccessIdentity(identity);
     const bucket = this.getBucket(project || id, originAccessIdentity);
