@@ -7,7 +7,7 @@ inputs:
     description: 'The name of the project'
     required: true
   action:
-    description: 'The action to perform (deploy or delete-stack)'
+    description: 'The action to perform (deploy or destroy)'
     required: true
   domain:
     description: 'The custom domain'
@@ -17,6 +17,9 @@ inputs:
     default: tmp
   optimized:
     description: 'Whether to optimize the build'
+  variables:
+    description: 'The environment variables'
+    required: false
   aws-account:
     description: 'The AWS account to deploy to'
     required: true
@@ -61,3 +64,4 @@ runs:
         ENVIRONMENT: ${{ inputs.environment }}
         OPTIMIZED: ${{ inputs.optimized }}
         CDK_ACTION: ${{ inputs.action }}
+        VARIABLES: ${{ inputs.variables }}
