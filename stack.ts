@@ -1,10 +1,4 @@
-#!/usr/bin/env node
-import 'dotenv/config';
-import 'source-map-support/register';
-
 import type { Construct } from 'constructs';
-
-import { PriceClass } from 'aws-cdk-lib/aws-cloudfront';
 
 import * as cdk from 'aws-cdk-lib';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
@@ -17,10 +11,10 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 
 export type Config = {
   environment: string;
-  domain?: string;
-  path?: string;
-  project?: string;
-  priceClass?: cloudfront.PriceClass;
+  domain: string;
+  path: string;
+  project: string;
+  priceClass: cloudfront.PriceClass;
   identity?: string;
   zoneID?: string;
 };
@@ -256,33 +250,3 @@ export class Stack extends cdk.Stack {
     });
   }
 }
-
-const app = new cdk.App();
-
-const {
-  AWS_ACCOUNT,
-  AWS_REGION,
-  AWS_ORIGIN_ACCESS_IDENTITY,
-  ORIGIN_PATH,
-  ENV,
-  STACK,
-  DOMAIN,
-  PROJECT_NAME,
-  OPTIMIZED,
-} = process.env || {};
-
-const priceClass = OPTIMIZED ? PriceClass.PRICE_CLASS_ALL : PriceClass.PRICE_CLASS_100;
-const environment = ENV || 'undefined';
-
-new Stack(app, STACK!, {
-  priceClass,
-  environment,
-  path: ORIGIN_PATH,
-  project: PROJECT_NAME,
-  domain: DOMAIN,
-  identity: AWS_ORIGIN_ACCESS_IDENTITY,
-  env: {
-    account: AWS_ACCOUNT,
-    region: AWS_REGION
-  }
-});

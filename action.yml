@@ -57,6 +57,7 @@ runs:
         AWS_ORIGIN_ACCESS_IDENTITY: ${{ inputs.identity }}
         AWS_ZONE_ID: ${{ inputs.aws-zone-id }}
         PROJECT_NAME: ${{ inputs.name }}
+        DOMAIN: ${{ inputs.domain }}
         ENVIRONMENT: ${{ inputs.environment }}
         OPTIMIZED: ${{ inputs.optimized }}
         CDK_ACTION: ${{ inputs.action }}
