@@ -38,7 +38,16 @@ runs:
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/RG-Systems-GH-Actions
         role-session-name: vp-cdk-deploy
         aws-region: ${{ inputs.aws-region }}
+    - shell: bash
+      run: |
+        mkdir cdk
+        cp -r $GITHUB_ACTION_PATH/* ./cdk
+        echo "DEBUG >>>"
+        cd ./cdk
+        ls -la
+        echo "DEBUG <<<"
     - uses: actions/setup-node@v4
+      working-directory: ./cdk
       with:
         node-version: 20.x
         cache: 'yarn'
