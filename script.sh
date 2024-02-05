@@ -1,6 +1,8 @@
 #!/bin/bash
 
-echo ">>> VARIABLES: $VARIABLES"
+echo ">>> VARIABLES"
+echo $VARIABLES
+echo "<<< VARIABLES"
 
 cd ./cdk
 
