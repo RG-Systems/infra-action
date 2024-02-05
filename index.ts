@@ -21,14 +21,7 @@ const config: Config = {
 
 if (process.env.ENVIRONMENT === 'tmp' && process.env.GITHUB_REF_NAME) {
   config.path = `${process.env.GITHUB_REF_NAME}/${config.path}`;
-}
-
-if (process.env.ENVIRONMENT === 'tmp') {
-  if (process.env.GITHUB_REF_NAME) {
-    config.domain = `${process.env.GITHUB_REF_NAME}-${config.domain}`;
-  } else {
-    config.domain = `${process.env.ORIGIN_PATH}-${config.domain}`;
-  }
+  config.domain = `${process.env.GITHUB_REF_NAME}-${config.domain}`;
 }
 
 new Stack(app, process.env.STACK!, config);

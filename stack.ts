@@ -50,12 +50,16 @@ export class Stack extends cdk.Stack {
       priceClass
     );
 
-    this.createEnvSpecificOrigin(
-      distribution,
+    distribution.addBehavior('/env.json', this.getEnvOrigin(
       bucket,
       originAccessIdentity,
-      environment
-    );
+      environment,
+      path,
+    ), {
+      compress: true,
+      allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
+    });
 
     this.createSubdomainRecords(distribution, zone, domain);
     this.createOutput(distribution, bucket, domain);
@@ -137,7 +141,7 @@ export class Stack extends cdk.Stack {
     return undefined;
   }
 
-  private getOrigin(
+  private getApplicationOrigin(
     bucket: s3.Bucket,
     originAccessIdentity: cloudfront.OriginAccessIdentity,
     path?: string
@@ -157,7 +161,7 @@ export class Stack extends cdk.Stack {
     priceClass?: cloudfront.PriceClass
   ): cloudfront.Distribution {
     const certificate = this.getCertificate(zone, domain);
-    const origin = this.getOrigin(bucket, originAccessIdentity, path);
+    const origin = this.getApplicationOrigin(bucket, originAccessIdentity, path);
 
     return new cloudfront.Distribution(this, 'Distribution', {
       certificate,
@@ -180,23 +184,26 @@ export class Stack extends cdk.Stack {
     });
   }
 
-  private createEnvSpecificOrigin(
-    distribution: cloudfront.Distribution,
+  private getEnvOrigin(
     bucket: s3.Bucket,
     originAccessIdentity: cloudfront.OriginAccessIdentity,
-    environment: string
-  ): void {
-    const origin = this.getOrigin(
+    environment: string,
+    path: string,
+  ): origins.S3Origin{
+    if (environment === 'tmp') {
+      const [env] = path.split('/');
+      return this.getApplicationOrigin(
+        bucket,
+        originAccessIdentity,
+        `/${env}`
+      );
+    }
+
+    return this.getApplicationOrigin(
       bucket,
       originAccessIdentity,
       `/${environment}`
     );
-
-    distribution.addBehavior(`/env.json`, origin, {
-      compress: true,
-      allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
-    });
   }
 
   private createSubdomainRecords(
