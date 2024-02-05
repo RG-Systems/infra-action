@@ -195,14 +195,14 @@ export class Stack extends cdk.Stack {
       return this.getApplicationOrigin(
         bucket,
         originAccessIdentity,
-        `/${env}`
+        `/${env}/env.json`
       );
     }
 
     return this.getApplicationOrigin(
       bucket,
       originAccessIdentity,
-      `/${environment}`
+      `/${environment}/env.json`
     );
   }
 

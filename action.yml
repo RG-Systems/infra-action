@@ -26,6 +26,21 @@ inputs:
   aws-region:
     description: 'The AWS region to deploy to'
     required: true
+  aws-role-to-assume:
+    description: 'The AWS role to assume'
+    required: true
+  aws-access-key-id:
+    description: 'The AWS access key id'
+    required: false
+  aws-secret-access-key:
+    description: 'The AWS secret access key'
+    required: false
+  aws-role-session-name:
+    description: 'The AWS role session name'
+    required: true
+  aws-role-external-id:
+    description: 'The AWS role external id'
+    required: false
   aws-zone-id:
     description: 'The AWS zone id to deploy to'
     required: true
@@ -38,9 +53,12 @@ runs:
   steps:
     - uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/RG-Systems-GH-Actions
-        role-session-name: vp-cdk-deploy
+        role-external-id: ${{ inputs.aws-role-external-id }}
+        role-to-assume: ${{ inputs.aws-role-to-assume }}
+        role-session-name: ${{ inputs.aws-role-session-name }}
         aws-region: ${{ inputs.aws-region }}
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
     - name: Copy CDK to working directory
       shell: bash
       run: |

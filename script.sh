@@ -41,11 +41,16 @@ else
   echo ">>> env.json ->"
   cat env.json
 
+  DISTRIBUTION_ID=$(jq --arg key "$STACK" '.[$key].DistributionId' cdk-outputs.json)
+  DISTRIBUTION_ID=$(echo $DISTRIBUTION_ID | sed -e 's/"//g')
+
   if [ $ENVIRONMENT = "tmp" ]; then
     echo ">>> Deploying the env variables"
     aws s3 cp env.json s3://$BUCKET/$GITHUB_REF_NAME/env.json
+    aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/$GITHUB_REF_NAM/env.json"
   else
     echo ">>> Deploying the env variables to $ENVIRONMENT"
     aws s3 cp env.json s3://$BUCKET/$ENVIRONMENT/env.json
+    aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/$ENVIRONMENT/env.json"
   fi
 fi
