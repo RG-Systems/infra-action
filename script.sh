@@ -1,4 +1,5 @@
 #!/bin/bash
+cd ./cdk
 
 export STACK=$PROJECT_NAME-$ENV
 

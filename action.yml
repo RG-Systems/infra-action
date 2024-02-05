@@ -47,7 +47,6 @@ runs:
         ls -la
         echo "DEBUG <<<"
     - uses: actions/setup-node@v4
-      working-directory: ./cdk
       with:
         node-version: 20.x
         cache: 'yarn'
