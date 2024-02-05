@@ -38,6 +38,10 @@ runs:
         role-to-assume: arn:aws:iam::${{ inputs.aws-account }}:role/RG-Systems-GH-Actions
         role-session-name: vp-cdk-deploy
         aws-region: ${{ inputs.aws-region }}
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'yarn'
     - name: Create UI Cloudfront + S3 Cloudformation Template
       shell: bash
       run: $GITHUB_ACTION_PATH/script.sh
